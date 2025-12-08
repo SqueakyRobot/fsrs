@@ -92,6 +92,8 @@ export default {
 
 ## Algorithm Background
 
+For complete mathematical details, see the [Algorithm Reference](docs/ALGORITHM.md).
+
 ### The DSR Model
 
 FSRS models memory using three distinct variables:
@@ -116,6 +118,8 @@ FSRS models memory using three distinct variables:
 - Want the marginal 2-3% accuracy improvement
 
 ## API Reference
+
+For complete API documentation, see the [Full API Reference](docs/API.md).
 
 ### FSRS Class
 
@@ -371,9 +375,3 @@ MIT License - see [LICENSE](LICENSE) for details.
 - [Technical Explanation of FSRS](https://expertium.github.io/Algorithm.html)
 - [FSRS Benchmark Results](https://github.com/ankitects/fsrs-benchmark)
 - [Original TypeScript Implementation](https://github.com/open-spaced-repetition/ts-fsrs)
-
-## Related Projects
-
-- [Anki](https://apps.ankiweb.net/) - Popular flashcard application that uses FSRS
-- [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) - Reference TypeScript implementation
-- [fsrs4anki](https://github.com/open-spaced-repetition/fsrs4anki) - FSRS for Anki add-on

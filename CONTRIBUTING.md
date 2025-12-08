@@ -46,7 +46,7 @@ Enhancement suggestions are welcome! Please:
 1. Check if there's already an issue discussing the change
 2. For significant changes, open an issue first to discuss the idea
 3. For small fixes (typos, obvious bugs), you can submit a PR directly
-4. Review the [specification document](doc/specs/in-progress/2025-12-07_fsrs-v4.5-implementation.md) to understand the project architecture
+4. Review the [specification document](docs/specs/implemented/2025-12-07_fsrs-v4.5-implementation.md) to understand the project architecture
 
 **Pull Request Process:**
 
@@ -126,7 +126,9 @@ If you're looking for ways to contribute:
   parameters.test.ts   - Parameter validation tests
   integration.test.ts  - Full algorithm integration tests
 
-/doc
+/docs
+  API.md          - Full API reference
+  ALGORITHM.md    - Algorithm background and formulas
   /specs          - Implementation specifications
 ```
 

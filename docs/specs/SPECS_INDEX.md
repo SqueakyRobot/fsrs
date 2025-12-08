@@ -4,21 +4,21 @@ This file tracks all specifications for the @squeakyrobot/fsrs library, includin
 
 ## Implemented Specs ✅
 
-| Spec | Date Created | Implementation Date | Status | Related Commits |
-|------|-------------|-------------------|--------|----------------|
-| *No specs implemented yet* | - | - | - | - |
+| Spec | Date Created | Implementation Date | Status | Notes |
+|------|-------------|-------------------|--------|-------|
+| [FSRS v4.5 Implementation](implemented/2025-12-07_fsrs-v4.5-implementation.md) | 2025-12-07 | 2025-12-08 | ✅ Complete | Core v4.5 algorithm with v6 compatibility. 147 tests passing. |
 
 ## In Progress 🚧
 
 | Spec | Date Created | Assigned | Status | Notes |
 |------|-------------|----------|--------|-------|
-| [FSRS v4.5 Implementation](in-progress/2025-12-07_fsrs-v4.5-implementation.md) | 2025-12-07 | Active | 🚧 In Progress | Core v4.5 algorithm with optional v6 compatibility. Priority: Critical |
+| *No specs in progress* | - | - | - | - |
 
 ## Planned 📋
 
 | Spec | Date Created | Priority | Dependencies | Notes |
 |------|-------------|----------|-------------|-------|
-| [Future Enhancements](planned/2025-12-07_future-enhancements.md) | 2025-12-07 | Medium | v1.0 Core Implementation | Post-v1.0 features: AutoRatingConfig, analytics utilities, parameter optimizer, migration tools |
+| [Future Enhancements](planned/2025-12-07_future-enhancements.md) | 2025-12-07 | Medium | v1.0 Complete | Post-v1.0 features: AutoRatingConfig, analytics utilities, parameter optimizer, migration tools |
 
 ## Not Implemented / Future 🔮
 
@@ -44,7 +44,7 @@ This file tracks all specifications for the @squeakyrobot/fsrs library, includin
 
 ### File Structure
 ```
-doc/specs/
+docs/specs/
 ├── SPECS_INDEX.md (this file)
 ├── implemented/    # Completed and deployed features
 ├── in-progress/    # Currently being worked on
