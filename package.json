@@ -51,12 +51,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/squeakyrobot/fsrs.git"
+    "url": "git+https://github.com/SqueakyRobot/fsrs"
   },
   "bugs": {
-    "url": "https://github.com/squeakyrobot/fsrs/issues"
+    "url": "https://github.com/SqueakyRobot/fsrs/issues"
   },
-  "homepage": "https://github.com/squeakyrobot/fsrs#readme",
+  "homepage": "https://github.com/SqueakyRobot/fsrs#readme",
   "author": "squeakyrobot",
   "engines": {
     "node": ">=18"
