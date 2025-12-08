@@ -18,7 +18,8 @@
             "vitest/globals"
         ],
         "lib": [
-            "ES2022"
+            "ES2022",
+            "DOM"
         ]
     },
     "include": [
