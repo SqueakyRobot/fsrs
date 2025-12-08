@@ -6,16 +6,17 @@ A pure TypeScript implementation of the Free Spaced Repetition Scheduler (FSRS) 
 
 FSRS is a modern, evidence-based spaced repetition algorithm that optimizes review intervals based on the DSR (Difficulty, Stability, Retrievability) model of memory. Unlike traditional algorithms like SM-2, FSRS uses trainable parameters optimized on real user data to achieve superior retention prediction.
 
-**Key Features:**
-- 🎯 **FSRS v4.5 Core**: Proven algorithm with stable defaults (17 parameters)
-- 📊 **81% Better Than SM-2**: Captures 98% of v6's improvement with fewer parameters
-- ⚡ **Edge Runtime Ready**: Works in Cloudflare Workers, Vercel Edge, Deno Deploy
-- 🎚️ **Continuous Grading**: Supports both discrete (1-4) and continuous (1.0-4.0) ratings
-- 🤖 **Auto-Rating**: Built-in response time to grade conversion
-- 🔄 **Optional v6 Support**: Accepts optimized 21-parameter sets for advanced users
-- 🔒 **Type-Safe**: Full TypeScript support with strict typing
-- 🚀 **Zero Dependencies**: Minimal bundle size (< 10KB gzipped)
-- 🧮 **Pure Functions**: Immutable API, no side effects
+### Key Features
+
+- **FSRS v4.5 Core**: Proven algorithm with stable defaults (17 parameters)
+- **81% Better Than SM-2**: Captures 98% of v6's improvement with fewer parameters
+- **Edge Runtime Ready**: Works in Cloudflare Workers, Vercel Edge, Deno Deploy
+- **Continuous Grading**: Supports both discrete (1-4) and continuous (1.0-4.0) ratings
+- **Auto-Rating**: Built-in response time to grade conversion
+- **Optional v6 Support**: Accepts optimized 21-parameter sets for advanced users
+- **Type-Safe**: Full TypeScript support with strict typing
+- **Zero Dependencies**: Minimal bundle size
+- **Pure Functions**: Immutable API, no side effects
 
 ## Installation
 
@@ -25,7 +26,7 @@ npm install @squeakyrobot/fsrs
 
 ## Quick Start
 
-### Basic Usage (Discrete Ratings)
+### Basic Usage with Discrete Ratings
 
 ```typescript
 import { FSRS, Rating } from '@squeakyrobot/fsrs';
@@ -48,7 +49,7 @@ console.log(`Current stability: ${updatedCard.stability} days`);
 console.log(`Difficulty: ${updatedCard.difficulty}/10`);
 ```
 
-### Auto-Rating (Continuous Grades)
+### Auto-Rating with Continuous Grades
 
 ```typescript
 import { FSRS } from '@squeakyrobot/fsrs';
@@ -69,7 +70,7 @@ const grade = fsrs.autoRating(responseTime, averageTime, card.difficulty);
 const { card: updatedCard, log } = fsrs.scheduleWithGrade(card, grade);
 ```
 
-### Edge Runtime (Cloudflare Workers)
+### Edge Runtime Example (Cloudflare Workers)
 
 ```typescript
 // worker.ts
@@ -102,51 +103,146 @@ FSRS models memory using three distinct variables:
 ### Why V4.5?
 
 **V4.5 provides the optimal balance for a minimal implementation:**
+
 - **Proven defaults**: Works excellently without requiring parameter optimization
 - **98% of v6's benefit**: Only 3% RMSE difference from v6 on benchmark data
 - **Simpler**: No same-day review complexity
 - **Stable**: Widely deployed with deterministic behavior
 
 **V6 support is available** for advanced users who:
+
 - Run the FSRS optimizer on their review history
-- Need personalized parameters (w₀-w₂₀)
+- Need personalized parameters (w0-w20)
 - Want the marginal 2-3% accuracy improvement
 
 ## API Reference
 
 ### FSRS Class
 
-```typescript
-class FSRS {
-  constructor(params?: Partial<FSRSParameters>);
+#### Constructor
 
-  repeat(card: Card, now: Date): Record<Rating, { log: ReviewLog; card: Card }>;
-  getRetrievability(card: Card, now: Date): number;
-  createEmptyCard(now?: Date): Card;
-}
+```typescript
+constructor(params?: Partial<FSRSParameters>)
 ```
+
+Creates a new FSRS scheduler instance with optional parameter overrides.
+
+#### Methods
+
+##### `repeat(card: Card, now?: Date): SchedulingCards`
+
+Calculates scheduling outcomes for all possible ratings. Useful for showing users all 4 button options with predicted intervals.
+
+**Parameters:**
+- `card`: Current card state
+- `now`: Current timestamp (default: current time)
+
+**Returns:** Map of Rating -> { log, card } for all 4 ratings
+
+##### `scheduleWithGrade(card: Card, grade: Rating | ContinuousRating, now?: Date): SchedulingResult`
+
+Schedules a review with a specific grade. Primary method for auto-rating scenarios and manual reviews.
+
+**Parameters:**
+- `card`: Current card state
+- `grade`: Rating (discrete 1-4) or continuous (1.0-4.0)
+- `now`: Current timestamp (default: current time)
+
+**Returns:** { log, card } with updated card state and review log
+
+##### `autoRating(responseTime: number, averageTime: number, difficulty?: number): ContinuousRating`
+
+Auto-rating utility that converts response time to a continuous grade.
+
+**Parameters:**
+- `responseTime`: Time taken to respond (milliseconds)
+- `averageTime`: Expected average response time (milliseconds)
+- `difficulty`: Optional card difficulty (1-10) for adjustment (default: 5.5)
+
+**Returns:** Continuous rating (1.0-4.0)
+
+**Formula:**
+- Much faster than average: approaches 4.0 (Easy)
+- Around average: approaches 3.0 (Good)
+- Slower than average: approaches 2.0 (Hard) or 1.0 (Again)
+
+##### `getRetrievability(card: Card, now?: Date): number`
+
+Calculates current retrievability (probability of recall).
+
+**Parameters:**
+- `card`: Card to evaluate
+- `now`: Current timestamp (default: current time)
+
+**Returns:** Retrievability (0-1)
+
+##### `createEmptyCard(now?: Date): Card`
+
+Creates a new empty card ready for first review.
+
+**Parameters:**
+- `now`: Optional timestamp (default: current time)
+
+**Returns:** New card in "New" state
+
+##### `getNextInterval(card: Card, rating: Rating, now?: Date): number`
+
+Gets the next interval for a given rating (preview mode).
+
+**Parameters:**
+- `card`: Card to evaluate
+- `rating`: Rating to preview
+- `now`: Current timestamp (default: current time)
+
+**Returns:** Interval in days
 
 ### Types
 
+#### Rating
+
 ```typescript
-// User feedback ratings
 type Rating = 1 | 2 | 3 | 4; // Again | Hard | Good | Easy
 
-// Card learning states
+const Rating = {
+  Again: 1,
+  Hard: 2,
+  Good: 3,
+  Easy: 4,
+} as const;
+```
+
+#### State
+
+```typescript
 type State = 0 | 1 | 2 | 3; // New | Learning | Review | Relearning
 
-interface Card {
-  due: Date;
-  stability: number;
-  difficulty: number;
-  elapsed_days: number;
-  scheduled_days: number;
-  reps: number;
-  lapses: number;
-  state: State;
-  last_review: Date;
-}
+const State = {
+  New: 0,
+  Learning: 1,
+  Review: 2,
+  Relearning: 3,
+} as const;
+```
 
+#### Card
+
+```typescript
+interface Card {
+  due: Date;              // Next scheduled review timestamp
+  stability: number;      // Days to 90% retention
+  difficulty: number;     // Complexity (1-10)
+  elapsed_days: number;   // Days since last review
+  scheduled_days: number; // Assigned interval
+  reps: number;           // Total review count
+  lapses: number;         // Failure count
+  state: State;           // Current learning phase
+  last_review: Date | null; // Previous review timestamp
+}
+```
+
+#### FSRSParameters
+
+```typescript
 interface FSRSParameters {
   request_retention: number;  // 0.7-0.97, default 0.9
   maximum_interval: number;   // Default 36500 days
@@ -155,6 +251,17 @@ interface FSRSParameters {
   enable_short_term?: boolean; // V6 same-day logic
 }
 ```
+
+### Utility Functions
+
+#### `isLapse(grade: Rating | ContinuousRating): boolean`
+
+Checks if a grade represents a lapse (failure to recall). Useful for analytics, streak tracking, and UI badges.
+
+**Parameters:**
+- `grade`: Rating (discrete or continuous)
+
+**Returns:** `true` if grade < 1.5 (Again)
 
 ## Configuration
 
@@ -192,7 +299,7 @@ const fsrs = new FSRS({
 
 ```typescript
 import create from 'zustand';
-import { FSRS, Card } from '@squeakyrobot/fsrs';
+import { FSRS, Card, Rating } from '@squeakyrobot/fsrs';
 
 const fsrs = new FSRS();
 
@@ -248,15 +355,11 @@ Based on the fsrs-benchmark dataset (1.7B reviews from 20K users):
 | FSRS v4.5 | 0.3624 | 0.0764 | ~81% |
 | FSRS v6 | 0.3460 | 0.0653 | ~84% |
 
-## Development Status
-
-This library is currently in active development. See the [specification document](doc/specs/in-progress/2025-12-07_fsrs-v4.5-implementation.md) for implementation details and progress.
-
-**Current Phase**: Core Algorithm Implementation
+**Key Insight**: FSRS v4.5 captures 98% of v6's improvement with 19% fewer parameters, making it ideal for applications that don't have user-specific optimization.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and how to contribute to this project.
+Contributions are welcome! See the [CONTRIBUTING guide](https://github.com/squeakyrobot/fsrs/blob/main/CONTRIBUTING.md) for development guidelines.
 
 ## License
 
@@ -271,5 +374,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Related Projects
 
-- [@squeakyrobot/rakugo](https://github.com/squeakyrobot/rakugo) - Japanese language processing library
-- [Anki](https://apps.ankiweb.net/) - Popular flashcard application that inspired this work
+- [Anki](https://apps.ankiweb.net/) - Popular flashcard application that uses FSRS
+- [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) - Reference TypeScript implementation
+- [fsrs4anki](https://github.com/open-spaced-repetition/fsrs4anki) - FSRS for Anki add-on

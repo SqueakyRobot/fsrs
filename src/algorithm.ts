@@ -250,12 +250,17 @@ export function isLapse(grade: Rating | ContinuousRating): boolean {
  * Uses a sigmoid-based formula to map performance metrics to a continuous grade:
  *   ratio = responseTime / averageTime
  *   adjusted_ratio = ratio * difficultyFactor
- *   grade = 4.0 - 3.0 * sigmoid(adjusted_ratio)
+ *   grade = 5.0 - 4.0 * sigmoid(adjusted_ratio)
  *
  * where:
  *   sigmoid(x) = 1 / (1 + e^(-k * (x - 1)))
  *   k = steepness parameter (default: 2.0)
- *   difficultyFactor = 1.0 + (difficulty - 5.5) / 20
+ *   difficultyFactor = 1.0 - (difficulty - 5.5) / 6
+ *
+ * The difficulty adjustment makes grading more lenient for harder cards:
+ *   - D = 10 (hardest): difficultyFactor ≈ 0.25 (most lenient)
+ *   - D = 5.5 (average): difficultyFactor = 1.0 (neutral)
+ *   - D = 1 (easiest): difficultyFactor ≈ 1.75 (strictest)
  *
  * @param responseTime - Time taken to respond (milliseconds)
  * @param averageTime - Expected average response time (milliseconds)

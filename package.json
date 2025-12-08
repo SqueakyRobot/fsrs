@@ -1,31 +1,59 @@
 {
   "name": "@squeakyrobot/fsrs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A TypeScript library for spaced repetition scheduling using the FSRS v4.5 algorithm with optional v6 support",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
-    "build": "npm run clean && tsc -p tsconfig.build-declarations.json && tsc",
-    "build-doc-pdf": "./build-pdf-docs.sh",
-    "dev": "tsc --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
+  },
+  "keywords": [
+    "fsrs",
+    "spaced-repetition",
+    "flashcards",
+    "anki",
+    "memory",
+    "learning",
+    "algorithm",
+    "typescript",
+    "edge-runtime",
+    "cloudflare-workers"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/squeakyrobot/fsrs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squeakyrobot/fsrs/issues"
+  },
+  "homepage": "https://github.com/squeakyrobot/fsrs#readme",
+  "author": "squeakyrobot",
+  "engines": {
+    "node": ">=18"
   }
 }
