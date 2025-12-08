@@ -27,7 +27,10 @@
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build && npm test",
+    "version": "npm run build && git add -A dist",
+    "preversion": "npm test"
   },
   "devDependencies": {
     "tsup": "^8.5.1",
