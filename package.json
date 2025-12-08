@@ -1,0 +1,31 @@
+{
+  "name": "@squeakyrobot/fsrs",
+  "version": "0.1.0",
+  "description": "A TypeScript library for spaced repetition scheduling using the FSRS v4.5 algorithm with optional v6 support",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.build-declarations.json && tsc",
+    "build-doc-pdf": "./build-pdf-docs.sh",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}
