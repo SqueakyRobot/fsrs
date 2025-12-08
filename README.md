@@ -9,9 +9,12 @@ FSRS is a modern, evidence-based spaced repetition algorithm that optimizes revi
 **Key Features:**
 - 🎯 **FSRS v4.5 Core**: Proven algorithm with stable defaults (17 parameters)
 - 📊 **81% Better Than SM-2**: Captures 98% of v6's improvement with fewer parameters
+- ⚡ **Edge Runtime Ready**: Works in Cloudflare Workers, Vercel Edge, Deno Deploy
+- 🎚️ **Continuous Grading**: Supports both discrete (1-4) and continuous (1.0-4.0) ratings
+- 🤖 **Auto-Rating**: Built-in response time to grade conversion
 - 🔄 **Optional v6 Support**: Accepts optimized 21-parameter sets for advanced users
 - 🔒 **Type-Safe**: Full TypeScript support with strict typing
-- 🚀 **Zero Dependencies**: Minimal bundle size, framework-agnostic
+- 🚀 **Zero Dependencies**: Minimal bundle size (< 10KB gzipped)
 - 🧮 **Pure Functions**: Immutable API, no side effects
 
 ## Installation
@@ -22,6 +25,8 @@ npm install @squeakyrobot/fsrs
 
 ## Quick Start
 
+### Basic Usage (Discrete Ratings)
+
 ```typescript
 import { FSRS, Rating } from '@squeakyrobot/fsrs';
 
@@ -31,7 +36,7 @@ const fsrs = new FSRS();
 // Create a new card
 let card = fsrs.createEmptyCard();
 
-// Simulate a review session
+// Simulate a review session - get all 4 possible outcomes
 const now = new Date();
 const reviewResults = fsrs.repeat(card, now);
 
@@ -41,6 +46,47 @@ const { card: updatedCard, log } = reviewResults[Rating.Good];
 console.log(`Next review in ${updatedCard.scheduled_days} days`);
 console.log(`Current stability: ${updatedCard.stability} days`);
 console.log(`Difficulty: ${updatedCard.difficulty}/10`);
+```
+
+### Auto-Rating (Continuous Grades)
+
+```typescript
+import { FSRS } from '@squeakyrobot/fsrs';
+
+const fsrs = new FSRS();
+let card = fsrs.createEmptyCard();
+
+// Track response time
+const start = Date.now();
+// ... user answers flashcard ...
+const responseTime = Date.now() - start;
+
+// Convert response time to grade (1.0-4.0)
+const averageTime = 2000; // Expected average response time (ms)
+const grade = fsrs.autoRating(responseTime, averageTime, card.difficulty);
+
+// Schedule with continuous grade
+const { card: updatedCard, log } = fsrs.scheduleWithGrade(card, grade);
+```
+
+### Edge Runtime (Cloudflare Workers)
+
+```typescript
+// worker.ts
+import { FSRS } from '@squeakyrobot/fsrs';
+
+const fsrs = new FSRS();
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const { card, responseTime } = await request.json();
+
+    const grade = fsrs.autoRating(responseTime, 2000);
+    const result = fsrs.scheduleWithGrade(card, grade);
+
+    return Response.json(result);
+  }
+};
 ```
 
 ## Algorithm Background

@@ -18,7 +18,7 @@ This file tracks all specifications for the @squeakyrobot/fsrs library, includin
 
 | Spec | Date Created | Priority | Dependencies | Notes |
 |------|-------------|----------|-------------|-------|
-| *No planned specs yet* | - | - | - | - |
+| [Future Enhancements](planned/2025-12-07_future-enhancements.md) | 2025-12-07 | Medium | v1.0 Core Implementation | Post-v1.0 features: AutoRatingConfig, analytics utilities, parameter optimizer, migration tools |
 
 ## Not Implemented / Future 🔮
 
