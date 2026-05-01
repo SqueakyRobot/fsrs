@@ -29,6 +29,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "prepublishOnly": "npm run build && npm test",
+    "publish:github": "npm publish --registry=https://npm.pkg.github.com",
     "version": "npm run build && git add -A dist",
     "preversion": "npm test"
   },
