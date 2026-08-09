@@ -129,7 +129,7 @@ export function updateDifficulty(
   rating: Rating | ContinuousRating,
   w: readonly number[]
 ): number {
-  if(difficulty == 0) return calculateInitialDifficulty(rating, w);
+  if (difficulty == 0) return calculateInitialDifficulty(rating, w);
   
   // D0(3) = baseline difficulty for "Good" rating
   const d0Good = w[4] - Math.exp(w[5] * 2) + 1;
