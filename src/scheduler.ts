@@ -124,11 +124,6 @@ export class FSRS {
       ? (now.getTime() - card.last_review.getTime()) / (24 * 60 * 60 * 1000)
       : 0;
 
-    // Handle based on current state
-    if (card.state === S.New) {
-      return this.scheduleNewCard(card, rating, now);
-    }
-
     return this.scheduleReviewCard(card, rating, elapsedDays, now);
   }
 
@@ -181,72 +176,7 @@ export class FSRS {
   }
 
   /**
-   * Schedules a new card's first review.
-   */
-  private scheduleNewCard(
-    card: Card,
-    rating: Rating,
-    now: Date
-  ): SchedulingResult {
-    const w = this.params.w;
-
-    // Calculate initial stability and difficulty
-    const stability = calculateInitialStability(rating, w);
-    const difficulty = calculateInitialDifficulty(rating, w);
-
-    // Calculate interval
-    let interval = calculateInterval(
-      stability,
-      this.params.request_retention,
-      w
-    );
-
-    // Apply fuzz if enabled
-    if (this.params.enable_fuzz) {
-      interval = fuzzInterval(interval);
-    }
-
-    // Cap interval
-    interval = Math.min(Math.round(interval), this.params.maximum_interval);
-    interval = Math.max(interval, 1);
-
-    // Calculate due date
-    const due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
-
-    // Determine new state
-    const newState: State = rating === R.Again ? S.Learning : S.Review;
-
-    // Build updated card
-    const newCard: Card = {
-      due,
-      stability,
-      difficulty,
-      elapsed_days: 0,
-      scheduled_days: interval,
-      reps: 1,
-      lapses: rating === R.Again ? 1 : 0,
-      state: newState,
-      last_review: now,
-    };
-
-    // Build review log
-    const log: ReviewLog = {
-      rating,
-      state: card.state,
-      due: card.due,
-      stability: card.stability,
-      difficulty: card.difficulty,
-      elapsed_days: 0,
-      last_elapsed_days: card.elapsed_days,
-      scheduled_days: interval,
-      review: now,
-    };
-
-    return { card: newCard, log };
-  }
-
-  /**
-   * Schedules a review for an existing card (Learning, Review, or Relearning).
+   * Schedules a review for an existing card.
    */
   private scheduleReviewCard(
     card: Card,
@@ -271,7 +201,10 @@ export class FSRS {
     let newLapses = card.lapses;
     let newState: State;
 
-    if (rating === R.Again) {
+    if (card.stability == 0) {
+      newStability = calculateInitialStability(rating, w);
+      newState = rating === Rating.Again ? State.Learning : State.Review;
+    } else if (rating === R.Again) {
       // Lapse: failed recall
       newStability = updateStabilityAfterLapse(
         card.stability,
